@@ -17,6 +17,8 @@ from urllib.parse import quote as urlquote
 if os.path.exists("env.py"):
     import env
 
+development = os.environ.get('DEVELOPMENT', False)
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -28,10 +30,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = development
 
-ALLOWED_HOSTS = ['8000-nicksmith10-hellodjango-9nh5457wo44.ws-eu107.gitpod.io',
-'nsmit-hello-django-31e5d9fb6fae.herokuapp.com']
+if development:
+    ALLOWED_HOSTS = ['8000-nicksmith10-hellodjango-9nh5457wo44.ws-eu107.gitpod.io']
+else:
+    ALLOWED_HOSTS = ['nsmit-hello-django-31e5d9fb6fae.herokuapp.com']
 
 
 # Application definition
@@ -80,19 +84,18 @@ WSGI_APPLICATION = 'django_todo.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-
-DB_URL = urlquote(os.environ.get("DATABASE_URL", "postgresql://"), ":/@")
-
-DATABASES = {
-    "default": dj_database_url.parse(DB_URL)
+if development:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
+else:
+    DB_URL = urlquote(os.environ.get("DATABASE_URL", "postgresql://"), ":/@")
+    DATABASES = {
+        "default": dj_database_url.parse(DB_URL)
+        }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
